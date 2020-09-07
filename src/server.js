@@ -29,8 +29,16 @@ app.use((req, res, next) => {
 	next()
 })
 
+const router = express.Router()
+router.get('/', (req,res)=> {
+	res.status(200).json({
+		message: 'hello',
+	})
+})
+
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
+app.use('/', cors(), router)
 app.use('/.netlify/functions/server/users', cors(), usersRoutes)
 app.use('/.netlify/functions/server/workouts', cors(), workoutsRoutes)
 app.use(cors())
