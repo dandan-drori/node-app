@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 
 exports.workouts_get_all = (req, res, next) => {
 	Workout.find()
-		.select('_id name exercises')
+		.select('_id name exercises createdAt')
 		.exec()
 		.then(docs => {
 			const response = {
@@ -14,6 +14,7 @@ exports.workouts_get_all = (req, res, next) => {
 						_id: doc._id,
 						name: doc.name,
 						exercises: doc.exercises,
+						createdAt: doc.createdAt,
 					}
 				}),
 			}
@@ -32,6 +33,7 @@ exports.workouts_post_workout = (req, res) => {
 		_id: mongoose.Types.ObjectId(),
 		name: req.body.name,
 		exercises: [],
+		createdAt: new Date().getTime(),
 	})
 	res.status(201).json({
 		message: 'Created Workout Successfully',
@@ -42,7 +44,7 @@ exports.workouts_post_workout = (req, res) => {
 exports.workouts_get_one = (req, res) => {
 	const name = req.params.workoutName
 	Workout.find({ name: name })
-		.select('_id name exercises')
+		.select('_id name exercises createdAt')
 		.exec()
 		.then(workout => {
 			if (workout.length < 1) {

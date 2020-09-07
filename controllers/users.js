@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 
 exports.users_get_all = (req, res) => {
 	User.find()
-		.select('_id name password email')
+		.select('_id name password email preferences profileInfo')
 		.exec()
 		.then(docs => {
 			const response = {
@@ -16,6 +16,8 @@ exports.users_get_all = (req, res) => {
 						name: doc.name,
 						password: doc.password,
 						email: doc.email,
+						preferences: doc.preferences,
+						profileInfo: doc.profileInfo,
 					}
 				}),
 			}
@@ -49,6 +51,8 @@ exports.users_signup_user = (req, res) => {
 							email: req.body.email,
 							name: req.body.name,
 							password: hash,
+							preferences: {},
+							profileInfo: {},
 						})
 						user
 							.save()
@@ -61,6 +65,8 @@ exports.users_signup_user = (req, res) => {
 										password: result.password,
 										name: req.body.name,
 										_id: result._id,
+										preferences: result.preferences,
+										profileInfo: result.profileInfo,
 									},
 								})
 							})
@@ -79,7 +85,7 @@ exports.users_signup_user = (req, res) => {
 exports.users_get_one = (req, res) => {
 	const email = req.params.email
 	User.find({ email: email })
-		.select('_id name email password')
+		.select('_id name email password preferences profileInfo')
 		.exec()
 		.then(user => {
 			if (user.length < 1) {

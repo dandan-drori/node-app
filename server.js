@@ -1,6 +1,6 @@
 const express = require('express')
 const cors = require('cors')
-const app = express()
+const serverless = require('serverless-http')
 const usersRoutes = require('./routes/users')
 const workoutsRoutes = require('./routes/workouts')
 require('dotenv').config()
@@ -9,6 +9,7 @@ const mongoose = require('mongoose')
 const uri = `mongodb+srv://Dandan:${process.env.MONGODB_PASSWORD}@workouts.iw0b9.mongodb.net/${process.env.MONGODB_DBNAME}?retryWrites=true&w=majority`
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 mongoose.Promise = global.Promise
+const app = express()
 
 app.use((req, res, next) => {
 	res.header('Access-Control-Allow-Origin', '*')
@@ -30,10 +31,12 @@ app.use((req, res, next) => {
 
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
-app.use('/users', cors(), usersRoutes)
-app.use('/workouts', cors(), workoutsRoutes)
+app.use('/.netlify/functions/users', cors(), usersRoutes)
+app.use('/.netlify/functions/workouts', cors(), workoutsRoutes)
 app.use(cors())
 
 app.listen(port, () => {
 	console.log(`listening on port ${port}`)
 })
+
+module.exports.handler = serverless(app)
